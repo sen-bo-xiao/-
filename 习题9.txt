@@ -1,0 +1,320 @@
+习 题 9
+一、问答题
+1．JFrame类的对象的默认布局是什么布局？         BorderLayout布局
+2．一个容器对象是否可以使用add方法添加一个JFrame窗口？不可以
+3．JTextField可以触发什么事件？    ActionEvent
+4．JTextArea中的文档对象可以触发什么类型的事件？ DocumentEvent。
+5．MouseListener接口中有几个方法？5
+6．处理鼠标拖动触发的MouseEvent事件需使用哪个接口？MouseMotionLisener
+二、选择题
+1．下列哪个叙述是不正确的？ C
+A．一个应用程序中最多只能有一个窗口。
+B．JFrame创建的窗口默认是不可见的。 
+C．不可以向JFrame窗口中添加JFame窗口。
+D．窗口可以调用setTitle(String s)方法设置窗口的标题。
+2．下列哪个叙述是不正确的？A
+A．JButton对象可以使用使用addActionLister(ActionListener l)方法将没有实现ActionListener接口的类的实
+例注册为自己的监视器。
+B．对于有监视器的JTextField文本框，如果该文本框处于活动状态（有输入焦点）时，用户即使不输入文本，
+只要按回车（Enter）键也可以触发ActionEvent事件
+C．监视KeyEvent事件的监视器必须实现KeyListener接口。
+D．监视WindowEvent事件的监视器必须实现WindowListener接口。
+3．下列哪个叙述是不正确的？ A
+A．使用FlowLayout布局的容器最多可以添加5个组件。
+B．使用BorderLayout布局的容器被划分成5个区域。
+C．JPanel的默认布局是FlowLayout布局。
+D．JDialog的默认布局是BorderLayout布局。
+三、编程题
+1．编写应用程序，有一个标题为“计算”的窗口，窗口的布局为FlowLayout布局。窗口中添加两个文本区，
+当我们在一个文本区中输入若干个数时，另一个文本区同时对你输入的数进行求和运算并求出平均值，也就是
+说随着你输入的变化，另一个文本区不断地更新求和及平均值。
+
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class 窗口求和平均值 {
+
+	public static void main(String[] args) {
+		windows win = new windows();
+		Listen lis = new Listen(); //创建监视器
+	    win.setCommandListener(lis); //窗口组合监视器
+		win.setTitle("计算");
+		win.setBounds(100,100,460,360);
+	}
+
+}
+class Listen implements CommandListener{
+	   JTextField textInput;
+	   JTextArea textShow;
+	   public void setJTextField(JTextField text) {
+	      textInput = text;
+	   }
+	   public void setJTextArea(JTextArea area) {
+	      textShow = area;
+	   } 
+	   public void actionPerformed(ActionEvent e) {
+		   int sum = 0;
+		   int count = 0;
+		   double ave = 0;
+	      String str=textInput.getText();
+	      String a[] =str.split("[^0123456789.]+");
+	      for(int i = 0;i<a.length;i++) {
+	    	  try {
+				sum += Double.parseDouble(a[i]);
+				count++;
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+	      }
+	      ave=sum/count;
+	      textShow.setText(null);
+	      textShow.append("\n和:"+sum);
+	      textShow. append("\n平均值:"+ave);
+
+
+	   }
+}
+
+interface CommandListener extends ActionListener {
+    public void setJTextField(JTextField text);
+    public void setJTextArea(JTextArea area); 
+    
+}
+
+class windows extends JFrame{
+	JButton button;
+	JTextField InText;
+	JTextArea  ShowText;
+	CommandListener listener;
+	public windows() {
+		setVisible(true);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		init();
+	}
+	 void init() {
+		setLayout(new FlowLayout());
+		InText = new JTextField(10); 
+		button = new JButton("确定");
+		ShowText = new JTextArea(9,30);
+		add(InText);
+		add(button);
+		add(new JScrollPane(ShowText));	
+	}
+	 void setCommandListener(CommandListener listener) {
+		 this.listener = listener;
+		 listener.setJTextArea(ShowText);
+		 listener.setJTextField(InText);
+		 InText.addActionListener(listener);
+		 button.addActionListener(listener);
+	 }
+}
+
+
+2．编写一个应用程序，有一个标题为“计算”的窗口，窗口的布局为FlowLayout布局。设计四个按钮，分别命名
+为“加”、“差”、“积、”、“除”，另外，窗口中还有三个文本框。单击相应的按钮，将两个文本框的数字做
+运算，在第三个文本框中显示结果。要求处理NumberFormatException异常。
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField; 
+
+public class 四个运算 {
+	public static void main(String[] args) {
+		ComputerFrame fr=new ComputerFrame();
+		fr.setTitle("计算");
+		fr.setBounds(100,100,400,360);
+		}
+	}
+		
+class ComputerFrame extends JFrame implements ActionListener{
+	JButton b1,b2,b3,b4;
+	JTextField t1,t2,t3;
+	JLabel label;
+	
+	public ComputerFrame() {
+		setVisible(true);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLayout(new FlowLayout());	
+		t1 = new JTextField(10);
+		t2 = new JTextField(10);
+		t3 = new JTextField(10);
+		label=new JLabel(" ",JLabel.CENTER);
+		add(t1);
+		add(label);
+		add(t2);
+		add(t3);
+			
+		b1 = new JButton("加");
+		b2 = new JButton("减");
+		b3 = new JButton("乘");
+		b4 = new JButton("除");
+		
+		add(b1);
+		add(b2);
+		add(b3);
+		add(b4);
+	
+		b1.addActionListener(this);
+		b2.addActionListener(this);
+		b3.addActionListener(this);
+		b4.addActionListener(this);
+		validate();
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		double n;
+		if(e.getSource() == b1) {
+			double n1,n2;
+			try {
+				n1 = Double.parseDouble(t1.getText());
+				n2 = Double.parseDouble(t2.getText());
+				n = n1+n2;
+				t3.setText(String.valueOf(n));
+				label.setText("+");
+			} catch (NumberFormatException ee) {
+				t3.setText("请输入数字字符");
+			}
+		}
+		else if(e.getSource() == b2) {
+			double n1,n2;
+			try {
+				n1 = Double.parseDouble(t1.getText());
+				n2 = Double.parseDouble(t2.getText());
+				n = n1-n2;
+				t3.setText(String.valueOf(n));
+				label.setText("-");
+			} catch (NumberFormatException ee) {
+				t3.setText("请输入数字字符");
+			}
+		}
+		else if(e.getSource() == b3) {
+			double n1,n2;
+			try {
+				n1 = Double.parseDouble(t1.getText());
+				n2 = Double.parseDouble(t2.getText());
+				n = n1*n2;
+				t3.setText(String.valueOf(n));
+				label.setText("*");
+			} catch (NumberFormatException ee) {
+				t3.setText("请输入数字字符");
+			}
+		}
+		else if(e.getSource() == b4) {
+			double n1,n2;
+			try {
+				n1 = Double.parseDouble(t1.getText());
+				n2 = Double.parseDouble(t2.getText());
+				n = n1/n2;
+				t3.setText(String.valueOf(n));
+				label.setText("/");
+			} catch (NumberFormatException ee) {
+				t3.setText("请输入数字字符");
+			}
+		}
+		validate();
+		
+	}
+}
+
+
+
+3．参照例子15编写一个体现MVC结构的GUI程序。首先编写一个封装梯形类，然后再编写一个窗口。要求窗口使
+用三文本框和一个文本区为梯形对象中的数据提供视图，其中三个文本框用来显示和更新梯形对象的上底、下底和
+高；文本区对象用来显示梯形的面积。窗口中有一个按钮，用户单击该按钮后，程序用3个文本框中的数据分别作
+为梯形对象的上底、下底和高，并将计算出的梯形的面积显示在文本区中。
+
+
+public class MVC结构的GUI程序 {
+public static void main(String[] args) {
+	MVC mvc = new MVC();
+	mvc.setTitle("MVC");
+	mvc.setBounds(100,100,400,360);
+	}
+}
+
+class MVC extends JFrame implements ActionListener{
+	JTextField ts,tx,tg;
+	Lader lader;
+	JButton b;
+	JTextArea A;
+	public MVC() {
+		setVisible(true);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		init();
+	}
+	void init() {
+		setLayout(new FlowLayout());
+		lader = new Lader();
+		ts = new JTextField(8);
+		tx = new JTextField(8);
+		tg = new JTextField(8);
+		A = new JTextArea(9,15);
+		b = new JButton("计算面积");
+		JPanel pNorth = new JPanel();
+		pNorth.add(new Label("上底"));
+		pNorth.add(ts);
+		pNorth.add(new Label("下底"));
+		pNorth.add(tx);
+		pNorth.add(new Label("高"));
+		pNorth.add(tg);
+		
+		pNorth.add(b);
+		b.addActionListener(this);
+		
+		add(pNorth,BorderLayout.NORTH);
+		add(new JScrollPane(A),BorderLayout.CENTER);
+	}
+	public void actionperformed(ActionEvent e) {
+		try {
+			double s = Double.parseDouble(ts.getText().trim());
+			double x = Double.parseDouble(tx.getText().trim());
+			double g = Double.parseDouble(tg.getText().trim());
+			lader.setS(s);
+			lader.setX(x);
+			lader.setG(g);
+			double area = lader.getarea();
+			A.append("面积："+area+"\n");
+		} catch (Exception e2) {
+			A.append("\n"+e2+"\n");
+		}
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
+class Lader{
+	double s,x,g;
+	public double getarea() {
+		double area = (s+x)*g/2.0;
+		return area;
+	}
+	public void setS(double s) {
+		this.s = s;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public void setG(double g) {
+		this.g = g;
+	}
+	
+}
+
